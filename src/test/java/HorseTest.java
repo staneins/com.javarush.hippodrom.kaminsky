@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -69,18 +70,14 @@ public class HorseTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "2.3, 56.2",
-            "1.4, 12.7",
-            "6,4, 15.2"
-    })
-    void horseMove(double speed, double distance) {
+    @ValueSource(doubles = {0.1, 0.2, 0.5, 1.0, 24324.23, 0.0})
+    void horseMove(double random) {
         try (MockedStatic<Horse> example = Mockito.mockStatic(Horse.class)) {
-            Horse mocky = new Horse("Mocky", speed, distance);
+            Horse mocky = new Horse("Mocky", 2.4, 23.1);
+            example.when(() -> Horse.getRandomDouble(0.2, 0.9)).thenReturn(random);
             mocky.move();
             example.verify(() -> Horse.getRandomDouble(0.2, 0.9));
-            Double moveTest = distance += speed * Horse.getRandomDouble(0.2, 0.9);
-            assertEquals(moveTest, mocky.getDistance());
+            assertEquals(23.1 + 2.4 * random, mocky.getDistance());
         }
 
     }
